@@ -1,0 +1,32 @@
+---
+# PersistentVolume for songs-db (PostgreSQL database)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: songs-db-pv
+  namespace: k8s-program
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual
+  hostPath:
+    path: /mnt/data/songs-db
+  persistentVolumeReclaimPolicy: Retain
+
+---
+# PersistentVolumeClaim for songs-db
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: songs-db-pvc
+  namespace: k8s-program
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  volumeName: songs-db-pv

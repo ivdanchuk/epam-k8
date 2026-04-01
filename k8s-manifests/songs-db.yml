@@ -54,4 +54,5 @@ spec:
             cpu: "500m"
       volumes:
       - name: postgres-storage
-        emptyDir: {}
+        persistentVolumeClaim:
+          claimName: songs-db-pvc

@@ -37,6 +37,9 @@ spec:
         imagePullPolicy: Never
         ports:
         - containerPort: 8081
+        volumeMounts:
+        - name: songs-ms-storage
+          mountPath: /data
         env:
         - name: SONGS_MS_PORT
           value: "8081"
@@ -55,3 +58,7 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "500m"
+      volumes:
+      - name: songs-ms-storage
+        persistentVolumeClaim:
+          claimName: songs-ms-pvc
