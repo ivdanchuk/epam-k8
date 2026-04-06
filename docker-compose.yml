@@ -1,0 +1,95 @@
+# postgres --------------------------------------------------------------------
+services:
+  resources-ms:
+    image: resources-image
+    build:
+      context: resources-service
+    ports:
+      - 8080:8080
+    restart: always
+    environment:
+      RESOURCES_DB_URL: resources-db
+      RESOURCES_DB_PORT: 5432
+    depends_on:
+      resources-db:
+        condition: service_healthy
+      songs-ms:
+        condition: service_started
+      eureka-server:
+        condition: service_started
+
+  songs-ms:
+    image: songs-image
+    build:
+      context: songs-service
+    ports:
+      - 8081:8081
+    restart: always
+    environment:
+      SONGS_DB_URL: songs-db
+      SONGS_DB_PORT: 5432
+    depends_on:
+      songs-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+
+  songs-db:
+    image: postgres
+    volumes:
+      - songs-db-data:/var/lib/postgresql
+    ports:
+      - 5432:5432
+    env_file:
+      - .env
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  resources-db:
+    image: postgres
+    volumes:
+      - resources-db-data:/var/lib/postgresql
+    ports:
+      - 5433:5432
+    env_file:
+      - .env
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # eureka server --------------------------------------------------------------------
+  eureka-server:
+    image: eureka-server-image
+    build:
+      context: eureka
+    ports:
+      - 8761:8761
+    restart: always
+
+#  # postgres pgAdmin --------------------------------------------------------------------
+#  pgadmin:
+#    image: dpage/pgadmin4
+#    volumes:
+#      - pg-admin:/var/lib/pgadmin
+#    environment:
+#      - PGADMIN_DEFAULT_EMAIL=stky20@gmail.com
+#      - PGADMIN_DEFAULT_PASSWORD=postgres
+#    ports:
+#      - 5050:80
+#    restart: always
+#    depends_on: # shows that that container (app) depends on db container
+#      - db
+
+# volumes --------------------------------------------------------------------
+volumes:        # declaration of the volume which might be needed
+  songs-db-data:
+  resources-db-data:
+#  db-data:
+  pg-admin:
