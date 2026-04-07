@@ -1,0 +1,33 @@
+---
+# PersistentVolume for songs-db-0 (StatefulSet pod 0)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-storage-songs-db-0
+  namespace: k8s-program
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: hostpath
+  hostPath:
+    path: /mnt/data/songs-db-stateful
+  persistentVolumeReclaimPolicy: Retain
+
+---
+# PersistentVolume for resources-db-0 (StatefulSet pod 0)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-storage-resources-db-0
+  namespace: k8s-program
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual
+  hostPath:
+    path: /mnt/data/resources-db-stateful
+  persistentVolumeReclaimPolicy: Retain
